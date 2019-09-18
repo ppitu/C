@@ -3,13 +3,16 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define ROZMIAR_PLANSZY 10
+#define LATWY 8
+#define ILOSCMINL 10
+#define SREDNI 16
+#define ILOSCMINS 40
+#define TRUDNY 22
+#define ILOSCMINT 99
+
 
 int pozycja_x = 0, pozycja_y = 0; //Globalne zmienne do ustawienie pozycje (dane sa pobierane z klawiatury w fukcji sterowanie())
 int koniec = 0;
-
-void ustawMine(int, int);
-void odkryjePlansze(int, int);
 
 struct pole
 {
@@ -17,13 +20,15 @@ struct pole
 	bool odkrycie;
 };
 
-struct pole plansza[ROZMIAR_PLANSZY][ROZMIAR_PLANSZY];
+void ustawMine(struct pole **tab, int, int, const int);
+void odkryjePlansze(struct pole **tab,int, int, const int);
 
-void generujPlansze() //Uzupelnianie tablicy plansza 
+
+void generujPlansze(struct pole **plansza, const int rozmiarplanszy) //Uzupelnianie tablicy plansza 
 {
-	for(int i = 0; i < ROZMIAR_PLANSZY; i++)
+	for(int i = 0; i < rozmiarplanszy; i++)
 	{
-		for(int j = 0; j < ROZMIAR_PLANSZY; j++)
+		for(int j = 0; j < rozmiarplanszy; j++)
 		{
 			plansza[i][j].wartosc = 0;
 			plansza[i][j].odkrycie = false;
@@ -31,29 +36,32 @@ void generujPlansze() //Uzupelnianie tablicy plansza
 	}
 }
 
-void losujPozycjeMiny(int o_poz_x, int o_poz_y) //losowanie min
+void losujPozycjeMiny(struct pole **plansza,int o_poz_x, int o_poz_y, int iloscmin, const int rozmiarplanszy) //losowanie min
 {
 	time_t tt;
 	int poz_x;
 	int poz_y;
-	int ilosc = 10;
+	int ilosc = iloscmin;
 
 	srand((unsigned)time(&tt)); //za zarodek wstawiamy pobrany czas w sekundach
 
 	while(ilosc > 0)
 	{
-		poz_x = rand()%10;
-		poz_y = rand()%10;
+		poz_x = rand()%rozmiarplanszy;
+		poz_y = rand()%rozmiarplanszy;
+
+		if(o_poz_y == poz_x && o_poz_y == poz_y)
+			continue;
 
 		if(plansza[poz_x][poz_y].wartosc != 9) //sprawdzenie czy na danym polu nie ma juz miny
 		{
-			ustawMine(poz_x,poz_y); //wywolanie funkcji ustawiajacej miny
+			ustawMine(plansza,poz_x,poz_y, rozmiarplanszy); //wywolanie funkcji ustawiajacej miny
 			ilosc--;
 		}
 	}
 }
 
-void ustawMine(int poz_x, int poz_y) //funkcja ustawiajaca miny oraz wartosci wokol nich
+void ustawMine(struct pole **plansza,int poz_x, int poz_y, const int rozmiarplanszy) //funkcja ustawiajaca miny oraz wartosci wokol nich
 {
 	if(plansza[poz_x][poz_y].wartosc != 9) //sprawdznie czy nie ma miy
 	{
@@ -65,7 +73,7 @@ void ustawMine(int poz_x, int poz_y) //funkcja ustawiajaca miny oraz wartosci wo
 			{
 				if((poz_x + i) < 0 || (poz_y+j) < 0) //sprawdzenie czy nie ustawiamy watosci poza plansza
 					continue;
-				if((poz_x + i) > 9 || (poz_y+j) > 9) //sprawdzenie czy nie ustawiamy wartosci poza plansza
+				if((poz_x + i) > (rozmiarplanszy - 1) || (poz_y+j) > (rozmiarplanszy - 1)) //sprawdzenie czy nie ustawiamy wartosci poza plansza
 					continue;
 
 				if(plansza[poz_x + i][poz_y + j].wartosc == 9) //sprawdzenie czy to nie mina
@@ -76,16 +84,16 @@ void ustawMine(int poz_x, int poz_y) //funkcja ustawiajaca miny oraz wartosci wo
 	}
 }
 
-void pokazPlansze() //funkcja pokazuje plasze
+void pokazPlansze(struct pole **plansza, const int rozmiarplanszy) //funkcja pokazuje plasze
 {
 	system("clear"); //czyszczenie terminala
 	
-	printf(" 0123456789\n"); //wyswietlenie wspolzednych kolumn
+	printf(" 0123456789\n"); //wyswietlenie wspolrzednych kolumn
 
-	for(int i = 0; i < ROZMIAR_PLANSZY; i++)
+	for(int i = 0; i < rozmiarplanszy; i++)
 	{
 		printf("%i", i); //wyswietlenie wspolrzednych wierszy
-		for(int j = 0; j < ROZMIAR_PLANSZY; j++)
+		for(int j = 0; j < rozmiarplanszy; j++)
 		{
 			if(plansza[i][j].odkrycie == true) //jesli odkrylismy pole
 			{
@@ -110,7 +118,7 @@ void pokazPlansze() //funkcja pokazuje plasze
 	}
 }
 
-void sterowanie() //funkcja za pomoca ktorej wprowadzamy wspolrzedne ktore chcemy sprawdzic
+void sterowanie(struct pole **plansza, const int rozmiarplanszy) //funkcja za pomoca ktorej wprowadzamy wspolrzedne ktore chcemy sprawdzic
 {
 	printf("Podaj wiersz: ");
 	scanf("%i", &pozycja_x);
@@ -120,8 +128,8 @@ void sterowanie() //funkcja za pomoca ktorej wprowadzamy wspolrzedne ktore chcem
 	if(plansza[pozycja_x][pozycja_y].wartosc == 9) //trafiles na mine
 		koniec = 2;
 
-	odkryjePlansze(pozycja_x, pozycja_y); //odkrywanie planszy
-	pokazPlansze(); //wywietlanie planszy
+	odkryjePlansze(plansza,pozycja_x, pozycja_y, rozmiarplanszy); //odkrywanie planszy
+	pokazPlansze(plansza, rozmiarplanszy); //wywietlanie planszy
 }
 
 //funkcja odkrywa plansze, wykonuje sie rekurencyjnie do napotkania nastepujacych warunkow:
@@ -130,11 +138,11 @@ void sterowanie() //funkcja za pomoca ktorej wprowadzamy wspolrzedne ktore chcem
 // - czy pole nie jest miny, aby nie odkryc miny
 //odkrywanie planszy nastepuje rekurencyjnie i odkrywa wszystkie pola do okola tak oby odkryc wszystkie pola z wartoscia 0 oraz ich sasiadow
 //gdy pole ma inna wartosc niz 0, odkrywamy je i wychodzimy zeby nie odkryc za duzo
-void odkryjePlansze(int x, int y)
+void odkryjePlansze(struct pole **plansza, int x, int y, const int rozmiarplanszy)
 {
-	if(x < 0 || x > 9)
+	if(x < 0 || x > (rozmiarplanszy - 1))
 		return;
-	if(y < 0 || y > 9)
+	if(y < 0 || y > (rozmiarplanszy - 1))
 		return;
 	if(plansza[x][y].odkrycie == true)
 		return;
@@ -145,24 +153,24 @@ void odkryjePlansze(int x, int y)
 		return;
 
 	//wywolujemy funkcje dla kazdego sasiada
-	odkryjePlansze(x - 1, y -1);
-	odkryjePlansze(x - 1, y);
-	odkryjePlansze(x - 1, y +1);
-	odkryjePlansze(x + 1, y -1);
-	odkryjePlansze(x + 1, y);
-	odkryjePlansze(x + 1, y +1);
-	odkryjePlansze(x, y -1);
-	odkryjePlansze(x, y);
-	odkryjePlansze(x, y +1);
+	odkryjePlansze(plansza,x - 1, y -1, rozmiarplanszy);
+	odkryjePlansze(plansza,x - 1, y, rozmiarplanszy);
+	odkryjePlansze(plansza,x - 1, y +1, rozmiarplanszy);
+	odkryjePlansze(plansza,x + 1, y -1, rozmiarplanszy);
+	odkryjePlansze(plansza,x + 1, y, rozmiarplanszy);
+	odkryjePlansze(plansza,x + 1, y +1, rozmiarplanszy);
+	odkryjePlansze(plansza,x, y -1, rozmiarplanszy);
+	odkryjePlansze(plansza,x, y, rozmiarplanszy);
+	odkryjePlansze(plansza,x, y +1, rozmiarplanszy);
 }
 
-bool czyWygrane() // sprwdzenie czy sie wygralo, liczy liczbe nieodkrytych pol
+bool czyWygrane(struct pole ** plansza, const int rozmiarplanszy) // sprwdzenie czy sie wygralo, liczy liczbe nieodkrytych pol
 {
 	int miny = 0;
 
-	for(int i = 0; i < ROZMIAR_PLANSZY; i++)
+	for(int i = 0; i < rozmiarplanszy; i++)
 	{
-		for(int j = 0; j < ROZMIAR_PLANSZY; j++)
+		for(int j = 0; j < rozmiarplanszy; j++)
 		{
 			if(plansza[j][i].odkrycie == false)
 				miny++;
@@ -176,21 +184,56 @@ bool czyWygrane() // sprwdzenie czy sie wygralo, liczy liczbe nieodkrytych pol
 
 int main()
 {
-	generujPlansze();
 	int x, y;
+	
+	int wybor;
+	int rozmiarplanszy;
+	int iloscmin;
+	
+
+	struct pole **tab;
+
+	printf("Witaj w grze Saper\n");
+	printf("Wybierz poziom trudnosi:\n[1] Latwy\n[2] Normalny\n[3]Trudny\n"); 
+	
+	scanf("%i", &wybor);
+
+	switch(wybor)
+	{
+		case 1:	
+			rozmiarplanszy = LATWY;
+			iloscmin = ILOSCMINL;
+			break;
+		case 2:
+			rozmiarplanszy = SREDNI;
+			iloscmin = ILOSCMINS;
+			break;
+		case 3:
+			rozmiarplanszy = TRUDNY;
+			iloscmin = ILOSCMINT;
+			break;
+	}	
+
+	tab = (struct pole **)malloc(rozmiarplanszy*sizeof(struct pole*));
+	
+	for(int i = 0; i < rozmiarplanszy; i++)
+		tab[i] = (struct pole*)malloc(rozmiarplanszy*sizeof(struct pole));
+
+
+	generujPlansze(tab, rozmiarplanszy);
 
 	printf("Podaj wiersz: ");
 	scanf("%i", &x);
 	printf("Podaj kolumne: ");
 	scanf("%i", &y);
-	losujPozycjeMiny(x, y);
-	odkryjePlansze(x, y);
-	pokazPlansze();	
+	losujPozycjeMiny(tab, x, y, iloscmin, rozmiarplanszy);
+	odkryjePlansze(tab, x, y, rozmiarplanszy);
+	pokazPlansze(tab,rozmiarplanszy);	
 
 	while(koniec == 0)
 	{
-		sterowanie();
-		if(czyWygrane() == true)
+		sterowanie(tab, rozmiarplanszy);
+		if(czyWygrane(tab, rozmiarplanszy) == true)
 			koniec = 1;
 	}
 
@@ -199,5 +242,9 @@ int main()
 	if(koniec == 2)
 		printf("\nKoniec gry, Przegrales\n");
 
+	for(int i = 0; i < rozmiarplanszy; i++)
+		free(tab[i]);
+	free(tab);
+	
 	return 0;
 }
