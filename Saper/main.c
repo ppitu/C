@@ -31,7 +31,7 @@ void generujPlansze() //Uzupelnianie tablicy plansza
 	}
 }
 
-void losujPozycjeMiny() //losowanie min
+void losujPozycjeMiny(int o_poz_x, int o_poz_y) //losowanie min
 {
 	time_t tt;
 	int poz_x;
@@ -177,7 +177,15 @@ bool czyWygrane() // sprwdzenie czy sie wygralo, liczy liczbe nieodkrytych pol
 int main()
 {
 	generujPlansze();
-	losujPozycjeMiny();
+	int x, y;
+
+	printf("Podaj wiersz: ");
+	scanf("%i", &x);
+	printf("Podaj kolumne: ");
+	scanf("%i", &y);
+	losujPozycjeMiny(x, y);
+	odkryjePlansze(x, y);
+	pokazPlansze();	
 
 	while(koniec == 0)
 	{
