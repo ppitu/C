@@ -87,29 +87,40 @@ void ustawMine(struct pole **plansza,int poz_x, int poz_y, const int rozmiarplan
 void pokazPlansze(struct pole **plansza, const int rozmiarplanszy) //funkcja pokazuje plasze
 {
 	system("clear"); //czyszczenie terminala
-	
-	printf(" 0123456789\n"); //wyswietlenie wspolrzednych kolumn
+
+	printf("  ");
+	for(int i = 0; i < rozmiarplanszy; i++) //wyswietlanie wspolrzednych kolumn
+		if(i < 10)
+			printf("%i  ", i);  
+		else
+			printf("%i ", i);
+
+	printf("\n");
 
 	for(int i = 0; i < rozmiarplanszy; i++)
 	{
-		printf("%i", i); //wyswietlenie wspolrzednych wierszy
+		if(i < 10)
+			printf("%i ", i);
+		else
+			printf("%i", i); //wyswietlenie wspolrzednych wierszy
+
 		for(int j = 0; j < rozmiarplanszy; j++)
 		{
 			if(plansza[i][j].odkrycie == true) //jesli odkrylismy pole
 			{
 				if(plansza[i][j].wartosc == 0) //jesli wartosc 0 wyswietl spacje
 				{
-					printf(" ");
+					printf("   ");
 				}
 				else //inaczej wyswietl numer pola
 				{
-					printf("%i", plansza[i][j].wartosc); 
+					printf("%i  ", plansza[i][j].wartosc); 
 				}
 			}
 			if(plansza[i][j].odkrycie == false) //jesli nie odkryte wyswietl #
 			{
 				printf("\033[1;31m");
-				printf("#");
+				printf("#  ");
 				printf("\033[0m");
 			}
 
@@ -128,7 +139,7 @@ void sterowanie(struct pole **plansza, const int rozmiarplanszy) //funkcja za po
 	if(plansza[pozycja_x][pozycja_y].wartosc == 9) //trafiles na mine
 		koniec = 2;
 
-	odkryjePlansze(plansza,pozycja_x, pozycja_y, rozmiarplanszy); //odkrywanie planszy
+	odkryjePlansze(plansza, pozycja_x, pozycja_y, rozmiarplanszy); //odkrywanie planszy
 	pokazPlansze(plansza, rozmiarplanszy); //wywietlanie planszy
 }
 
@@ -185,66 +196,79 @@ bool czyWygrane(struct pole ** plansza, const int rozmiarplanszy) // sprwdzenie 
 int main()
 {
 	int x, y;
-	
+
 	int wybor;
 	int rozmiarplanszy;
 	int iloscmin;
-	
+	int wyjdz = 0;	
 
 	struct pole **tab;
 
-	printf("Witaj w grze Saper\n");
-	printf("Wybierz poziom trudnosi:\n[1] Latwy\n[2] Normalny\n[3]Trudny\n"); 
-	
-	scanf("%i", &wybor);
-
-	switch(wybor)
+	while(wyjdz == 0)
 	{
-		case 1:	
-			rozmiarplanszy = LATWY;
-			iloscmin = ILOSCMINL;
-			break;
-		case 2:
-			rozmiarplanszy = SREDNI;
-			iloscmin = ILOSCMINS;
-			break;
-		case 3:
-			rozmiarplanszy = TRUDNY;
-			iloscmin = ILOSCMINT;
-			break;
-	}	
+		system("clear");		
 
-	tab = (struct pole **)malloc(rozmiarplanszy*sizeof(struct pole*));
-	
-	for(int i = 0; i < rozmiarplanszy; i++)
-		tab[i] = (struct pole*)malloc(rozmiarplanszy*sizeof(struct pole));
+		printf("Witaj w grze Saper\n");
+		printf("Wybierz poziom trudnosi:\n[1] Latwy\n[2] Normalny\n[3] Trudny\n[4] Wyjdz\n"); 
+
+		scanf("%i", &wybor);
+
+		switch(wybor)
+		{
+			case 1:	
+				rozmiarplanszy = LATWY;
+				iloscmin = ILOSCMINL;
+				break;
+			case 2:
+				rozmiarplanszy = SREDNI;
+				iloscmin = ILOSCMINS;
+				break;
+			case 3:
+				rozmiarplanszy = TRUDNY;
+				iloscmin = ILOSCMINT;
+				break;
+			case 4:
+				wyjdz++;
+				continue;	
+				break;
+		}	
+
+		tab = (struct pole **)malloc(rozmiarplanszy*sizeof(struct pole*));
+
+		for(int i = 0; i < rozmiarplanszy; i++)
+			tab[i] = (struct pole*)malloc(rozmiarplanszy*sizeof(struct pole));
 
 
-	generujPlansze(tab, rozmiarplanszy);
+		generujPlansze(tab, rozmiarplanszy);
 
-	printf("Podaj wiersz: ");
-	scanf("%i", &x);
-	printf("Podaj kolumne: ");
-	scanf("%i", &y);
-	losujPozycjeMiny(tab, x, y, iloscmin, rozmiarplanszy);
-	odkryjePlansze(tab, x, y, rozmiarplanszy);
-	pokazPlansze(tab,rozmiarplanszy);	
+		pokazPlansze(tab, rozmiarplanszy);
+		printf("Podaj wiersz: ");
+		scanf("%i", &x);
+		printf("Podaj kolumne: ");
+		scanf("%i", &y);
+		losujPozycjeMiny(tab, x, y, iloscmin, rozmiarplanszy);
+		odkryjePlansze(tab, x, y, rozmiarplanszy);
+		pokazPlansze(tab,rozmiarplanszy);	
 
-	while(koniec == 0)
-	{
-		sterowanie(tab, rozmiarplanszy);
-		if(czyWygrane(tab, rozmiarplanszy) == true)
-			koniec = 1;
+		while(koniec == 0)
+		{
+			sterowanie(tab, rozmiarplanszy);
+			if(czyWygrane(tab, rozmiarplanszy) == true)
+				koniec = 1;
+		}
+
+		if(koniec == 1)
+			printf("\nKoniec gry, Wygrales!!!\n");
+		if(koniec == 2)
+			printf("\nKoniec gry, Przegrales\n");
+
+		printf("Nacisnij enter...\n");
+		getchar();
+		getchar();
 	}
-
-	if(koniec == 1)
-		printf("\nKoniec gry, Wygrales!!!\n");
-	if(koniec == 2)
-		printf("\nKoniec gry, Przegrales\n");
-
 	for(int i = 0; i < rozmiarplanszy; i++)
 		free(tab[i]);
 	free(tab);
-	
+
 	return 0;
 }
