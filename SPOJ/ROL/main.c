@@ -3,46 +3,24 @@
 
 int main(void)
 {
-	int n, k;
-
-	scanf("%d", &n);
-	scanf("%d", &k);
-
-	int *tab = (int*)malloc(n * sizeof(int));
-	int *tabhelp = (int*)malloc(n * sizeof(int));
-
-	for(int i = 0; i < n; i++)
-	{
-		scanf("%d", &tab[i]);
-	}
+	int iletestow;
+	int ileelementow;
 	
-	int w = k;
+	int tab[100];
 
-	for(int i = 0; i < n; i++)
+	scanf("%i", &iletestow);
+	
+	for(size_t i = 0; i < iletestow; i++)
 	{
-		if(w < n)
-		{
-			tabhelp[i] = tab[w];
-		}
-		else
-			break;
+		scanf("%i", &ileelementow);
+		for(size_t j = 0; j < ileelementow; j++)
+			scanf("%i", &tab[j]);
 
-		w++;
+		for(size_t j = 1; j < ileelementow; j++)
+			printf("%i ", tab[j]);
+			
+		printf("%i\n", tab[0]);
 	}	
-	
-		
-	for(int i = 0; i < k; i++)
-	{
-		tabhelp[i + k - 1] = tab[i];
-	}
-
-	for(int i = 0; i < n; i++)
-		printf("%d ", tabhelp[i]);
-	
-	//printf("\n");
-
-	free(tabhelp);
-	free(tab);
 
 	return 0;
 }
