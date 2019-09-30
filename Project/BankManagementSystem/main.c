@@ -8,17 +8,42 @@ int TAB_SIZE = 1;
 struct Data
 {
 	bool in;
-	char name[200];
-	char surename[200];
-	char dateofbirth[10];
-	char address[200];
-	char password[200];
-	char citizenshipnumber[7];
+	char *name;
+	char *surename;
+	char *dateofbirth;
+	char *address;
+	char *password;
+	char *citizenshipnumber;
+	int means;
 	int phone;
 	int housenumber;
 };
 
 typedef struct Data data;
+
+void getString(data *tab, int size, int ops)
+{
+	
+
+}
+
+//This function is used to compare text
+int compareString(char* first, char* second)
+{
+	while(*first == *second)
+	{
+		if(*first == '\0' || *second == '\0')
+			break;
+
+		first++;
+		second++;
+	}
+
+	if(*first == '\0' && *second == '\0')
+		return 0;
+	else 
+		return -1;
+}
 
 void menu()
 {
@@ -36,6 +61,14 @@ void menu()
 void newAcc(data *tab)
 {
 	int size = 0;
+
+	char name[200];
+	char surename[200];
+	char date[200];
+	char citizen[200];
+	char city[200];
+	char password[200];
+
 	//Szukanie wolnego miejsa w istniejacej tablicy
 	for(size_t i = 0; i < TAB_SIZE; i++)
 	{
@@ -44,28 +77,41 @@ void newAcc(data *tab)
 		size++;
 	}
 
-	char name[200];
-	char surename[200];
-	char dateofbirth[200];
-	char citizenshipnumber[200];
-	char address[200];
-	char password[200];
-	int phone;
-
 	tab[size].in = true;
 
 	system("clear");
 	puts("CREATE NEW ACCOUNT");
 	printf("Name: ");
-	scanf("%s", tab[size].name);
+	scanf("%s", name);
+	tab[size].name = (char*)realloc(tab[size].name ,strlen(name) * sizeof(char));
+	strcpy(tab[size].name, name);
 	printf("Surename: ");
-	scanf("%s", tab[size].surename);
+	scanf("%s", surename);
+	tab[size].surename = (char*)realloc(tab[size].surename ,strlen(surename) * sizeof(char));
+	strcpy(tab[size].surename, surename);
 	printf("Date of Birth: ");
-	scanf("%s", tab[size].dateofbirth);
-	printf("Addres: ");
-	scanf("%s", tab[size].address);
+	scanf("%s", date);
+	tab[size].dateofbirth = (char*)realloc(tab[size].dateofbirth ,strlen(date) * sizeof(char));
+	strcpy(tab[size].dateofbirth, date);
+	printf("Citizen Ship Number: ");
+	scanf("%s", citizen);
+	tab[size].citizenshipnumber = (char*)realloc(tab[size].citizenshipnumber ,strlen(citizen) * sizeof(char));
+	strcpy(tab[size].citizenshipnumber, citizen);
+	printf("City: ");
+	scanf("%s", city);
+	tab[size].address = (char*)realloc(tab[size].address ,strlen(city) * sizeof(char));
+	strcpy(tab[size].address, city);
+	printf("House number: ");
 	scanf("%i", &tab[size].housenumber);
-	
+	printf("Phone: ");
+	scanf("%i", &tab[size].phone);
+	printf("Password: ");
+	scanf("%s", password);
+	tab[size].password = (char*)realloc(tab[size].password ,strlen(password) * sizeof(char));
+	strcpy(tab[size].password, password);
+	printf("Means: ");
+	scanf("%i", &tab[size].means);
+
 }
 
 void viewList(data *tab)
@@ -74,9 +120,19 @@ void viewList(data *tab)
 	{
 		if(tab[i].in)
 		{
-			printf("%s\t%s\t%s\t%s %i\n", tab[i].name, tab[i].surename, tab[i].dateofbirth, tab[i].address), tab[i].housenumber);
+			printf("%s\t%s\t%s\t%s %i\t%i\t%i\n", tab[i].name, tab[i].surename, tab[i].dateofbirth, tab[i].address, tab[i].housenumber,tab[i].phone, tab[i].means);
 		}
 	}
+}
+
+void edit()
+{
+	char nick[200];
+	system("clear");
+	printf("Enter your nickname :");
+	scanf("%s", nick);
+
+
 }
 
 int main()
@@ -87,8 +143,7 @@ int main()
 
 	menu();
 	newAcc(tab);
-	printf("%s\n", tab[0].name);
 	viewList(tab);
-	
+
 	free(tab);
 }	
