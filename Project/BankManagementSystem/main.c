@@ -197,7 +197,7 @@ void edit(data *tab)
 						printf("Add new address: ");
 						scanf("%s", tab[i].address);
 						printf("Add new house number: ");
-						scanf("%i", tab[i].housenumber);
+						scanf("%i", &tab[i].housenumber);
 						system("clear");
 						puts("The address has benn changed!");
 						puts("Press enter to continue...");
@@ -217,15 +217,144 @@ void edit(data *tab)
 					case 7:
 						cho++;
 						break;
+					default:
+						puts("Wrong options selected");
+						break;
 				}
 			}
 			break;
 	}
 }
 
-void transact()
+void transact(data *tab)
 {
+	char nick[200];
+	char password[200];
+	int cho = 0;
+	int ops;
+	int deposit;
+	system("clear");
+	printf("Enter your name: ");
+	scanf("%s", nick);
+
+	printf("Enter your password: ");
+	scanf("%s", password);
+
+	int i;
+
+	for(i = 0; i < TAB_SIZE; i++)
+	{
+		if(compareString(nick, tab[i].name) == 0)
+		{
+			if(compareString(password, tab[i].password) == 0)
+			{
+				cho++;
+				break;
+			}
+		}
+	}
 	
+	switch(cho)
+	{
+		case 0:
+			system("clear");
+			puts("Podane zle dane!!!");
+			break;
+		case 1:
+			while(cho == 1)
+			{
+				system("clear");
+				puts("1. Add measures");
+				puts("2. Withdraw measures");
+				puts("3. EXIT");
+
+				scanf("%i", &ops);
+
+				switch(ops)
+				{
+					case 1:
+						system("clear");
+						puts("Enter how much you want to deposit: ");
+						scanf("%i", &deposit);
+						tab[i].means += deposit;
+						puts("Means have been added");
+						puts("Press enter to continue...");
+						getchar();
+						getchar();
+						break;
+					case 2:
+						system("clear");
+						puts("Enter how much you want to withdraw");
+						scanf("%i", &deposit);
+						if(deposit > tab[i].means)
+							puts("You don't have enough means");
+						else
+						{
+							tab[i].means -= deposit;
+							puts("Means have been withdraw");
+						}
+						puts("Press enter to continue...");
+						getchar();
+						getchar();
+						break;
+					case 3:
+						cho++;	
+						break;
+					default:
+						puts("Wrong options selected!");
+						break;
+				}
+			}	
+			break;
+	}
+}
+
+void erase(data *tab)
+{
+	char nick[200];
+	char password[200];
+	int ops;
+	system("clear");
+	printf("Enter your name: ");
+	scanf("%s", nick);
+
+	printf("Enter your password: ");
+	scanf("%s", password);
+
+	int i;
+
+	for(i = 0; i < TAB_SIZE; i++)
+	{
+		if(compareString(nick, tab[i].name) == 0)
+		{
+			if(compareString(password, tab[i].password) == 0)
+			{
+				break;
+			}
+		}
+	}
+
+	puts("Are you sure you want to delete account?");
+	puts("1. YES");
+	puts("2. NO");
+	scanf("%i", &ops);
+	
+	switch(ops)
+	{
+		case 1:
+			tab[i].in = false;
+			puts("Account has been deleted");
+			puts("Press enter to continue...");
+			getchar();
+			getchar();
+			break;
+		case 2:
+			break;
+		default:
+			break;
+		
+	}
+
 }
 
 int main()
@@ -240,7 +369,12 @@ int main()
 	viewList(tab);
 	getchar();
 	getchar();
-	edit(tab);
+	//edit(tab);
+	//transact(tab);
+	viewList(tab);
+	getchar();
+	getchar();
+	erase(tab);
 	viewList(tab);
 	/*for(size_t i = 0; i < TAB_SIZE; i++)
 	  {
