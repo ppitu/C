@@ -29,5 +29,6 @@ void transact(data*i, int);
 void viewList(data*);
 void erase(data*);
 int login(data*);
+void accountDetails(data*, int);
 
 #endif //HEADER_H

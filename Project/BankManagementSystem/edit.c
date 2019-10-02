@@ -17,7 +17,7 @@ void edit(data *tab, int i)
 		puts("3. Change date of birth");
 		puts("4. Change phone number");
 		puts("5. Change address");
-		puts("6. Chamge Citizen Ship Nubmer");
+		puts("6. Chamge Citizenship Nubmer");
 		puts("7. EXIT");
 
 		scanf("%i", &opt);
@@ -78,10 +78,10 @@ void edit(data *tab, int i)
 				getchar();	
 				break;
 			case 6:
-				printf("Add new citizen ship number: ");
+				printf("Add new citizenship number: ");
 				scanf("%s", tab[i].citizenshipnumber);
 				system("clear");
-				puts("The citizen ship number has benn changed!");
+				puts("The citizenship number has benn changed!");
 				puts("Press enter to continue...");
 				getchar();
 				getchar();	

@@ -12,6 +12,7 @@ int main()
 	int ops = 0;
 	int option;
 	int pom = 0;
+	int choose;
 
 	data *tab;
 
@@ -30,7 +31,7 @@ int main()
 		puts("3. EXIT");
 
 		scanf("%i", &option);
-	
+
 		switch(option)
 		{
 			case 1:
@@ -47,8 +48,41 @@ int main()
 				}
 				else
 				{
-					edit(tab, pom);
-					transact(tab, pom);
+					int x = 0;
+
+					while(x == 0)
+					{
+						system("clear");
+						puts("WELCOME TO YOUR ACCOUNT!!!");
+						printf("1. Transact\t\t\t\tYour means:\t %i\n", tab[pom].means);
+						puts("2. Edit");
+						puts("3. Account details");
+						puts("4. Log out");
+
+						scanf("%i", &choose);
+
+						switch(choose)
+						{
+							case 1:
+								system("clear");				
+								transact(tab, pom);
+								break;
+							case 2:
+								system("clear");
+								edit(tab, pom);
+								break;
+							case 3:
+								system("clear");
+								accountDetails(tab, pom);
+								break;
+							case 4:
+								x++;
+								break;
+							default:
+								puts("Wybrano zla opcje!!!");
+								break;
+						}
+					}
 				}
 				break;
 			case 3:

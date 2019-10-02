@@ -32,7 +32,7 @@ void newAcc(data *tab)
 	scanf("%s", tab[size].surename);
 	printf("Date of Birth: ");
 	scanf("%s", tab[size].dateofbirth);
-	printf("Citizen Ship Number: ");
+	printf("Citizenship Number: ");
 	scanf("%s", tab[size].citizenshipnumber);
 	printf("City: ");
 	scanf("%s", tab[size].address);
